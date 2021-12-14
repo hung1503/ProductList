@@ -1,22 +1,38 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Product from './component/Product'; 
 import './App.css';
 
 function App() {
+  const [product, setProduct] = useState([]);
+  const [item, setItem] = useState('');
+  useEffect(() => {
+    axios
+      .get("https://streamr.network/api/v1/products?publicAccess=true")
+      .then (response => {
+        setProduct(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, []);
+
+  var selectProduct = product.sort((a,b) => {
+      return a.name.localeCompare(b.name)}).map(item => {
+      return (
+        <option key={item.id} value={item.name}>
+          {item.name}
+        </option>)
+    })
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Product List</h1>
+        <select onChange={({target}) => setItem(target.value)}>
+          {selectProduct}
+        </select>
+        <Product item={item} product={product}/>
       </header>
     </div>
   );
